@@ -67,7 +67,7 @@ Configuração inicial:
 - Acesso SSH removido
 - Tráfego bloqueado por padrão
 
-Objetivo:
+Objetivos:
 
 - Aplicar boas práticas de segurança
 - Controlar explicitamente os acessos permitidos
@@ -121,14 +121,6 @@ Após o provisionamento foram analisadas as informações da instância:
 
 ---
 
-## Evidência
-
-### Instância em Execução
-
-![Instância EC2 criada](evidencias/01-instancia-executando.png)
-
----
-
 ## Etapa 5 - Monitoramento da Instância
 
 Foram utilizadas as funcionalidades de monitoramento disponibilizadas pelo Amazon CloudWatch.
@@ -140,14 +132,14 @@ Foram utilizadas as funcionalidades de monitoramento disponibilizadas pelo Amazo
 - Network Out
 - Status Checks
 
-Além disso, foi utilizada a opção:
+Também foi utilizada a funcionalidade:
 
 ```text
 Monitor and Troubleshoot
 → Get Instance Screenshot
 ```
 
-Para visualizar a saída da instância durante o processo de inicialização.
+para visualizar a saída da instância durante o processo de inicialização.
 
 ---
 
@@ -195,19 +187,11 @@ t3.micro
 t3.small
 ```
 
-### Benefício
+### Benefícios
 
 - Mais memória disponível
 - Maior capacidade de processamento
 - Melhor desempenho para workloads maiores
-
----
-
-## Evidência
-
-### Instância Redimensionada
-
-![Instância EC2 t3.small](evidencias/02-instancia-redimensionada.png)
 
 ---
 
@@ -241,7 +225,7 @@ Foi realizada uma tentativa de encerrar a instância.
 
 ❌ Operação bloqueada
 
-A instância possuía:
+A instância possuía a configuração:
 
 ```text
 Termination Protection = Enabled
@@ -278,10 +262,6 @@ Durante este laboratório foram praticados os seguintes conceitos:
 ✅ **100%**
 
 Todas as questões da verificação de conhecimento foram respondidas corretamente.
-
-### Evidência
-
-![Avaliação 100%](evidencias/03-avaliacao-100.png)
 
 ---
 
