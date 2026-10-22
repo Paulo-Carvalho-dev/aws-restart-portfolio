@@ -1,10 +1,10 @@
-# Lab 01 - Amazon EC2
+# Lab 01 - Implantação e Gerenciamento de Instância Amazon EC2
 
 ## Objetivo
 
-Neste laboratório foi realizada a criação, configuração, monitoramento e gerenciamento de uma instância Amazon EC2 utilizando os recursos disponibilizados pelo ambiente AWS Academy/AWS re:Start.
+Neste laboratório foi realizada a criação, configuração, monitoramento e gerenciamento de uma instância Amazon EC2 utilizando os recursos disponibilizados pelo ambiente AWS re/Start.
 
-O laboratório teve como foco a compreensão do ciclo de vida de uma instância EC2, além da configuração de segurança, armazenamento e monitoramento.
+O objetivo foi compreender o ciclo de vida de uma instância EC2, desde sua criação até seu encerramento, além de explorar configurações de segurança, monitoramento, armazenamento e redimensionamento de recursos.
 
 ---
 
@@ -12,34 +12,73 @@ O laboratório teve como foco a compreensão do ciclo de vida de uma instância 
 
 - Amazon EC2
 - Amazon EBS
-- Security Groups
 - Amazon CloudWatch
 - Amazon VPC
+- Security Groups
 
 ---
 
-## Atividades Realizadas
+## Arquitetura do Laboratório
 
-### 1. Criação da Instância
-
-Foi criada uma instância EC2 utilizando:
-
-- AMI Amazon Linux 2023
-- Tipo de instância t3.micro
-- Proteção contra encerramento habilitada
-- Volume EBS padrão
+```text
+Internet
+    │
+    ▼
+Security Group (HTTP)
+    │
+    ▼
+Amazon EC2
+(Amazon Linux 2023)
+    │
+    ▼
+Amazon EBS
+```
 
 ---
 
-### 2. Configuração do Servidor Web
+## Etapa 1 - Criação da Instância
 
-Foi utilizado um script User Data para:
+Acessado o serviço EC2 através do Console de Gerenciamento da AWS.
 
-- Instalar o Apache HTTP Server
-- Inicializar automaticamente o serviço
-- Criar uma página HTML simples
+### Configurações Utilizadas
 
-Script utilizado:
+| Configuração                 | Valor             |
+| ---------------------------- | ----------------- |
+| Nome da Instância            | Web Server        |
+| Sistema Operacional          | Amazon Linux 2023 |
+| Tipo da Instância            | t3.micro          |
+| VPC                          | Lab VPC           |
+| Chave SSH                    | Não utilizada     |
+| Proteção contra Encerramento | Habilitada        |
+
+---
+
+## Etapa 2 - Configuração do Security Group
+
+Foi criado o grupo de segurança:
+
+```text
+Web Server Security Group
+```
+
+Configuração inicial:
+
+- Nenhuma regra HTTP liberada
+- Acesso SSH removido
+- Tráfego bloqueado por padrão
+
+Objetivo:
+
+- Aplicar boas práticas de segurança
+- Controlar explicitamente os acessos permitidos
+
+---
+
+## Etapa 3 - Configuração do User Data
+
+Foi utilizado um script User Data para automatizar a instalação do servidor web.
+
+### Script Utilizado
 
 ```bash
 #!/bin/bash
@@ -49,95 +88,220 @@ systemctl start httpd
 echo '<html><h1>Hello From Your Web Server!</h1></html>' > /var/www/html/index.html
 ```
 
----
+### Resultado
 
-### 3. Monitoramento
+O script executou automaticamente:
 
-Foram analisados:
-
-- Status Checks
-- Métricas da instância
-- Informações de monitoramento no CloudWatch
-
----
-
-### 4. Configuração de Rede
-
-Foi configurado um Security Group personalizado.
-
-Inicialmente:
-
-- Sem acesso HTTP
-
-Posteriormente:
-
-- Regra HTTP (porta 80)
-- Origem: Anywhere IPv4
-
-Permitindo acesso ao servidor web pela internet.
+1. Instalação do Apache HTTP Server
+2. Habilitação do serviço na inicialização
+3. Inicialização do serviço
+4. Criação da página web padrão
 
 ---
 
-### 5. Redimensionamento
+## Etapa 4 - Inicialização da Instância
 
-Foi realizado o redimensionamento da infraestrutura:
+Após o provisionamento foram analisadas as informações da instância:
 
-#### Instância
+- Instance ID
+- Tipo da Instância
+- Endereço IPv4 Público
+- DNS Público
+- VPC
+- Subnet
+- Status da Instância
 
-- Antes: t3.micro
-- Depois: t3.small
-
-#### Volume EBS
-
-- Antes: 8 GiB
-- Depois: 10 GiB
-
----
-
-### 6. Proteção Contra Encerramento
-
-Foi validado o funcionamento do recurso de proteção contra encerramento da instância.
-
-Etapas:
-
-1. Tentativa de encerramento bloqueada.
-2. Desativação da proteção.
-3. Encerramento da instância com sucesso.
-
----
-
-## Resultados Obtidos
+### Resultado
 
 ✅ Instância criada com sucesso
 
-✅ Servidor Web implantado
+✅ Estado da instância: Running
 
-✅ Security Group configurado
-
-✅ Monitoramento realizado
-
-✅ Instância redimensionada
-
-✅ Proteção contra encerramento testada
-
-✅ Instância encerrada corretamente
+✅ Verificações de status aprovadas
 
 ---
 
-## Evidências
+## Evidência
 
-As capturas de tela encontram-se na pasta `evidencias`.
+### Instância em Execução
+
+![Instância EC2 criada](evidencias/01-instancia-executando.png)
+
+---
+
+## Etapa 5 - Monitoramento da Instância
+
+Foram utilizadas as funcionalidades de monitoramento disponibilizadas pelo Amazon CloudWatch.
+
+### Métricas Observadas
+
+- CPUUtilization
+- Network In
+- Network Out
+- Status Checks
+
+Além disso, foi utilizada a opção:
+
+```text
+Monitor and Troubleshoot
+→ Get Instance Screenshot
+```
+
+Para visualizar a saída da instância durante o processo de inicialização.
+
+---
+
+## Etapa 6 - Liberação de Acesso HTTP
+
+Ao acessar o IP público pela primeira vez, a página não foi exibida.
+
+### Motivo
+
+O Security Group não possuía regra liberando tráfego HTTP na porta 80.
+
+### Correção
+
+Foi adicionada a seguinte regra:
+
+| Configuração | Valor         |
+| ------------ | ------------- |
+| Tipo         | HTTP          |
+| Porta        | 80            |
+| Origem       | Anywhere IPv4 |
+
+Após salvar a regra, o acesso ao servidor web foi liberado.
+
+### Resultado Esperado
+
+```html
+Hello From Your Web Server!
+```
+
+---
+
+## Etapa 7 - Redimensionamento da Instância
+
+A instância foi interrompida e teve seu tipo alterado.
+
+### Antes
+
+```text
+t3.micro
+```
+
+### Depois
+
+```text
+t3.small
+```
+
+### Benefício
+
+- Mais memória disponível
+- Maior capacidade de processamento
+- Melhor desempenho para workloads maiores
+
+---
+
+## Evidência
+
+### Instância Redimensionada
+
+![Instância EC2 t3.small](evidencias/02-instancia-redimensionada.png)
+
+---
+
+## Etapa 8 - Redimensionamento do Volume EBS
+
+O volume associado à instância foi expandido.
+
+### Antes
+
+```text
+8 GiB
+```
+
+### Depois
+
+```text
+10 GiB
+```
+
+### Objetivo
+
+Aumentar a capacidade de armazenamento disponível para o sistema operacional e aplicações.
+
+---
+
+## Etapa 9 - Teste de Proteção Contra Encerramento
+
+Foi realizada uma tentativa de encerrar a instância.
+
+### Resultado
+
+❌ Operação bloqueada
+
+A instância possuía:
+
+```text
+Termination Protection = Enabled
+```
+
+Após desabilitar a proteção:
+
+✅ Instância encerrada com sucesso
 
 ---
 
 ## Conhecimentos Aplicados
 
+Durante este laboratório foram praticados os seguintes conceitos:
+
 - Amazon EC2
-- AMI
-- User Data
+- Amazon Machine Images (AMI)
 - Security Groups
+- Amazon VPC
 - Amazon EBS
+- User Data Scripts
 - Amazon CloudWatch
+- Monitoramento de Instâncias
 - Escalabilidade Vertical
-- Proteção contra Encerramento
-- Administração de Instâncias
+- Proteção Contra Encerramento
+- Gerenciamento do Ciclo de Vida de Instâncias
+
+---
+
+## Resultado da Avaliação
+
+### Pontuação Obtida
+
+✅ **100%**
+
+Todas as questões da verificação de conhecimento foram respondidas corretamente.
+
+### Evidência
+
+![Avaliação 100%](evidencias/03-avaliacao-100.png)
+
+---
+
+## Lições Aprendidas
+
+- Como criar uma instância Amazon EC2.
+- Como selecionar uma AMI adequada.
+- Como utilizar User Data para automação.
+- Como configurar Security Groups.
+- Como liberar acesso HTTP.
+- Como monitorar recursos utilizando CloudWatch.
+- Como alterar o tipo de uma instância.
+- Como expandir volumes EBS.
+- Como utilizar proteção contra encerramento.
+- Como encerrar recursos de forma segura.
+
+---
+
+## Conclusão
+
+Este laboratório proporcionou uma experiência prática com o Amazon EC2, permitindo compreender as etapas de criação, configuração, monitoramento, segurança e redimensionamento de uma instância na AWS.
+
+A atividade reforçou conceitos fundamentais de Computação em Nuvem e demonstrou como os serviços da AWS podem ser utilizados para disponibilizar aplicações de forma rápida, escalável e segura.
